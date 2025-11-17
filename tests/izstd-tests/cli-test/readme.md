@@ -1,0 +1,1 @@
+Cli tests focus using the command line interface of zstd to test the izstd change in behavior.
