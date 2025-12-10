@@ -84,3 +84,5 @@ unsigned HIST_count_simple(unsigned* count, unsigned* maxSymbolValuePtr,
  @  This function does not need any additional stack memory.
  */
 void HIST_add(unsigned* count, const void* src, size_t srcSize);
+
+size_t HIST_count_o1ando0(unsigned* o0count, unsigned* o1count, unsigned* maxSymbolValue, const void *src, size_t srcSize);

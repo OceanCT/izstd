@@ -72,6 +72,12 @@ typedef struct {
     FSE_repeat offcode_repeatMode;
     FSE_repeat matchlength_repeatMode;
     FSE_repeat litlength_repeatMode;
+    unsigned char offcodeBestO1[MaxOff + 1];
+    unsigned char matchlengthBestO1[MaxML + 1];
+    unsigned char litlengthBestO1[MaxLL + 1];
+    unsigned char offcodeBesto0;
+    unsigned char matchlengthBesto0;
+    unsigned char litlengthBesto0;
 } ZSTD_fseCTables_t;
 
 typedef struct {

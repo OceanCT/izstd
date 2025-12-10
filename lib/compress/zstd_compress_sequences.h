@@ -38,12 +38,30 @@ ZSTD_buildCTable(void* dst, size_t dstCapacity,
                 const FSE_CTable* prevCTable, size_t prevCTableSize,
                 void* entropyWorkspace, size_t entropyWorkspaceSize);
 
+size_t 
+ZSTD_buildCTableO1(void* dst, size_t dstCapacity,
+                FSE_CTable* nextCTable, unsigned char* bestNormO1, unsigned char* besto0,
+                U32 FSELog, SymbolEncodingType_e type,
+                unsigned* counto0, unsigned* counto1, U32 max,
+                const BYTE* codeTable, size_t nbSeq,
+                const S16* defaultNorm, U32 defaultNormLog, U32 defaultMax,
+                const FSE_CTable* prevCTable, size_t prevCTableSize,
+                void* entropyWorkspace, size_t entropyWorkspaceSize);
+
 size_t ZSTD_encodeSequences(
             void* dst, size_t dstCapacity,
             FSE_CTable const* CTable_MatchLength, BYTE const* mlCodeTable,
             FSE_CTable const* CTable_OffsetBits, BYTE const* ofCodeTable,
             FSE_CTable const* CTable_LitLength, BYTE const* llCodeTable,
             SeqDef const* sequences, size_t nbSeq, int longOffsets, int bmi2);
+
+size_t ZSTD_encodeSequencesO1(
+            void* dst, size_t dstCapacity,
+            FSE_CTable const* CTable_MatchLength, BYTE const* mlCodeTable, unsigned char* mlbesto1, unsigned char mlbesto0,
+            FSE_CTable const* CTable_OffsetBits, BYTE const* ofCodeTable, unsigned char* ofbesto1, unsigned char ofbesto0,
+            FSE_CTable const* CTable_LitLength, BYTE const* llCodeTable, unsigned char* llbesto1, unsigned char llbesto0,
+            SeqDef const* sequences, size_t nbSeq, int longOffsets);
+
 
 size_t ZSTD_fseBitCost(
     FSE_CTable const* ctable,

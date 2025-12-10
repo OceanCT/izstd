@@ -27,7 +27,7 @@
 #define ZSTD_DEPS_NEED_MATH64
 #include "../common/zstd_deps.h"  /* ZSTD_memset */
 #include "../common/bits.h" /* ZSTD_highbit32 */
-
+#include "../common/o1debug.h" /* RAWLOG */
 
 /* **************************************************************
 *  Error Management
@@ -69,6 +69,7 @@ size_t FSE_buildCTable_wksp(FSE_CTable* ct,
                       const short* normalizedCounter, unsigned maxSymbolValue, unsigned tableLog,
                             void* workSpace, size_t wkspSize)
 {
+    // o1printf("|FSE_buildCTable_wksp| maxSymbolValue=%u, tableLog=%u \n", maxSymbolValue, tableLog);
     U32 const tableSize = 1 << tableLog;
     U32 const tableMask = tableSize - 1;
     void* const ptr = ct;
@@ -466,6 +467,7 @@ size_t FSE_normalizeCount (short* normalizedCounter, unsigned tableLog,
                            const unsigned* count, size_t total,
                            unsigned maxSymbolValue, unsigned useLowProbCount)
 {
+    o1printf("|FSE_normalizeCount| maxSymbolValue=%u, tableLog=%u, total=%zu \n", maxSymbolValue, tableLog, total);
     /* Sanity checks */
     if (tableLog==0) tableLog = FSE_DEFAULT_TABLELOG;
     if (tableLog < FSE_MIN_TABLELOG) return ERROR(GENERIC);   /* Unsupported size */
@@ -552,6 +554,7 @@ static size_t FSE_compress_usingCTable_generic (void* dst, size_t dstSize,
                            const void* src, size_t srcSize,
                            const FSE_CTable* ct, const unsigned fast)
 {
+    o1printf("|FSE_compress_usingCTable_generic| srcSize=%zu, dstSize=%zu, fast=%u \n", srcSize, dstSize, fast);
     const BYTE* const istart = (const BYTE*) src;
     const BYTE* const iend = istart + srcSize;
     const BYTE* ip=iend;
@@ -611,6 +614,7 @@ size_t FSE_compress_usingCTable (void* dst, size_t dstSize,
                            const void* src, size_t srcSize,
                            const FSE_CTable* ct)
 {
+    //  o1printf("|FSE_compress_usingCTable| srcSize=%zu, dstSize=%zu \n", srcSize, dstSize);
     unsigned const fast = (dstSize >= FSE_BLOCKBOUND(srcSize));
 
     if (fast)
