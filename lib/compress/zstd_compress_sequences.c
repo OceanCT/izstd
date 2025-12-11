@@ -302,6 +302,22 @@ ZSTD_buildCTable(void* dst, size_t dstCapacity,
     }
 }
 
+typedef struct {
+    unsigned o1countnum;
+    unsigned char symbol;
+} o1count_t;
+void o1count_tsort(o1count_t* counts, unsigned size) {
+    for(unsigned i = 0; i < size - 1; i++) {
+        for(unsigned j = 0; j < size - i - 1; j++) {
+            if(counts[j].o1countnum < counts[j + 1].o1countnum) {
+                o1count_t temp = counts[j];
+                counts[j] = counts[j + 1];
+                counts[j + 1] = temp;
+            }
+        }
+    }
+}
+
 
 size_t
 ZSTD_buildCTableO1(void* dst, size_t dstCapacity,
@@ -356,18 +372,18 @@ ZSTD_buildCTableO1(void* dst, size_t dstCapacity,
         assert(oend >= op);
         {   size_t const NCountSize = FSE_writeNCount(op, (size_t)(oend - op), wksp->norm, max, tableLog);   /* overflow protected */
             o1printf("|ZSTD_buildCTableO1| write NCountSize: %zu \n", NCountSize);
-            unsigned short symbol = 0;
-            for(; symbol <= max; symbol++) {
-                // find the best symbol for each symbol following o1 result 
-                unsigned short bsymbol = 0;
-                unsigned short tmpsymbol = 1;
-                for(; tmpsymbol <= max; tmpsymbol++) {
-                    if(counto1[symbol * (max + 1) + tmpsymbol] > counto1[symbol * (max + 1) + bsymbol]) {
-                        bsymbol = tmpsymbol;
-                    }
-                }
-                bestNormO1[symbol] = bsymbol;
-            }
+            unsigned char symbol = 0;
+            // for(; symbol <= max; symbol++) {
+            //     // find the best symbol for each symbol following o1 result 
+            //     unsigned short bsymbol = 0;
+            //     unsigned short tmpsymbol = 1;
+            //     for(; tmpsymbol <= max; tmpsymbol++) {
+            //         if(counto1[symbol * (max + 1) + tmpsymbol] > counto1[symbol * (max + 1) + bsymbol]) {
+            //             bsymbol = tmpsymbol;
+            //         }
+            //     }
+            //     bestNormO1[symbol] = bsymbol;
+            // }
             // find best o0 for all symbol and set best *besto0 to that symbol
             *besto0 = 0;
             symbol = 0;
@@ -376,6 +392,32 @@ ZSTD_buildCTableO1(void* dst, size_t dstCapacity,
                     *besto0 = symbol;
                 }
             }
+            // sort o1count of best o0 
+            o1count_t* o1counts_forbesto0 = (o1count_t*)ZSTD_malloc(sizeof(o1count_t) * (max + 1));
+            for(symbol = 0; symbol <= max; symbol++) {
+                o1counts_forbesto0[symbol].symbol = symbol;
+                o1counts_forbesto0[symbol].o1countnum = counto1[*besto0 * (max + 1) + symbol];
+            }
+            o1count_tsort(o1counts_forbesto0, max + 1);
+            // set bestNormO1 according to sorted o1count
+            // reserve order 
+            for(symbol = 0; symbol <= max; symbol++) {
+                // bestNormO1[symbol] = o1counts_forbesto0[symbol].symbol;
+                bestNormO1[o1counts_forbesto0[symbol].symbol] = symbol;
+            }
+            // o1printf o1count of best o0 
+            o1printf("o1count of besto0 (%u): ", *besto0);
+            for(unsigned i = 0; i <= max; i++) {
+                o1printf("%u ", counto1[*besto0 * (max + 1) + i]);
+            }
+            o1printf("\n");
+            // o1printf bestNormO1
+            o1printf("bestNormO1: ");
+            for(unsigned i = 0; i <= max; i++) {
+                o1printf("%u ", bestNormO1[i]);
+            }
+            o1printf("\n");
+
             // write bestNormO1 to op 
             memcpy(op + NCountSize, bestNormO1, sizeof(unsigned short) * (max + 1));
             FORWARD_IF_ERROR(NCountSize, "FSE_writeNCount failed");
@@ -411,57 +453,67 @@ size_t ZSTD_encodeSequencesO1(
     memcpy(mlCodeTable, mlCodeTableori, nbSeq * sizeof(BYTE));
     memcpy(ofCodeTable, ofCodeTableori, nbSeq * sizeof(BYTE));
     memcpy(llCodeTable, llCodeTableori, nbSeq * sizeof(BYTE));
-    {
-        unsigned conversion_num = 0;
-        o1printf("mlCodeTable conversion, mlbesto0: %u \n", mlbesto0);
-        unsigned short prevsymbol = 0;
-        unsigned index = 0;
-        for(; index < nbSeq; index++) {
-            unsigned tmp = llCodeTable[index];
-            if(mlCodeTable[index] == mlbesto1[prevsymbol] && mlCodeTable[index] != mlbesto0) {
-              mlCodeTable[index] = mlbesto0;
-              conversion_num++;
-            } else if(mlCodeTable[index] == mlbesto0 && mlCodeTable[index] != mlbesto1[prevsymbol]) {
-              mlCodeTable[index] = mlbesto1[prevsymbol];
-            }
-            prevsymbol = tmp;
-        }
-        o1printf("mlCodeTable conversion done, total conversion num: %u \n", conversion_num);
-    }
-    {
-        unsigned conversion_num = 0;
-        o1printf("ofCodeTable conversion, ofbesto0: %u \n", ofbesto0);
-        unsigned short prevsymbol = 0;
-        unsigned index = 0;
-        for(; index < nbSeq; index++) {
-            unsigned tmp = llCodeTable[index];
-            if(ofCodeTable[index] == ofbesto1[prevsymbol] && ofCodeTable[index] != ofbesto0) {
-              ofCodeTable[index] = ofbesto0;
-                conversion_num++;
-            } else if(ofCodeTable[index] == ofbesto0 && ofCodeTable[index] != ofbesto1[prevsymbol]) {
-              ofCodeTable[index] = ofbesto1[prevsymbol];
-            }
-            prevsymbol = tmp;
-        }
-        o1printf("ofCodeTable conversion done, total conversion num: %u \n", conversion_num);
-    }
-    {
-        unsigned conversion_num = 0;
-        o1printf("llCodeTable conversion, llbesto0: %u \n", llbesto0);
-        unsigned short prevsymbol = 0;
-        unsigned index = 0;
-        for(; index < nbSeq; index++) {
-            unsigned tmp = llCodeTable[index];
-            if(llCodeTable[index] == llbesto1[prevsymbol] && llCodeTable[index] != llbesto0) {
-                conversion_num++;
-              llCodeTable[index] = llbesto0;
-            } else if(llCodeTable[index] == llbesto0 && llCodeTable[index] != llbesto1[prevsymbol]) {
-              llCodeTable[index] = llbesto1[prevsymbol];
-            }
-            prevsymbol = tmp;
-        }
-        o1printf("llCodeTable conversion done, total conversion num: %u \n", conversion_num);
-    }
+    // o1printf besto1 of ml, of, ll
+    // o1printf("mlbesto1: ");
+    // for(unsigned i = 0; i <= 255; i++) {
+    //     o1printf("%u ", mlbesto1[i]);
+    // }
+    // o1printf("\n");
+    // o1printf("ofbesto1: ");
+    // for(unsigned i = 0; i <= 255; i++) {
+    //     o1printf("%u ", ofbesto1[i]);
+    // }
+    // o1printf("\n");
+    // o1printf("llbesto1: ");
+    // for(unsigned i = 0; i <= 255; i++) {
+    //     o1printf("%u ", llbesto1[i]);
+    // }
+    // o1printf("\n");
+    // {
+    //     unsigned conversion_num = 0;
+    //     o1printf("mlCodeTable conversion, mlbesto0: %u \n", mlbesto0);
+    //     unsigned short prevsymbol = 0;
+    //     unsigned index = 0;
+    //     for(; index < nbSeq; index++) {
+    //         unsigned tmp = mlCodeTable[index];
+    //         if(prevsymbol == mlbesto0 && mlCodeTable[index] != mlbesto1[mlCodeTable[index]]) {
+    //             mlCodeTable[index] = mlbesto1[mlCodeTable[index]];
+    //             conversion_num++;
+    //         }
+    //         prevsymbol = tmp;
+    //     }
+    //     o1printf("mlCodeTable conversion done, total conversion num: %u \n", conversion_num);
+    // }
+    // {
+    //     unsigned conversion_num = 0;
+    //     o1printf("ofCodeTable conversion, ofbesto0: %u \n", ofbesto0);
+    //     unsigned short prevsymbol = 0;
+    //     unsigned index = 0;
+    //     for(; index < nbSeq; index++) {
+    //         unsigned tmp = ofCodeTable[index];
+    //         if(prevsymbol == ofbesto0 && ofCodeTable[index] != ofbesto1[ofCodeTable[index]]) {
+    //             ofCodeTable[index] = ofbesto1[ofCodeTable[index]];
+    //             conversion_num++;
+    //         }
+    //         prevsymbol = tmp;
+    //     }
+    //     o1printf("ofCodeTable conversion done, total conversion num: %u \n", conversion_num);
+    // }
+    // {
+    //     unsigned conversion_num = 0;
+    //     o1printf("llCodeTable conversion, llbesto0: %u \n", llbesto0);
+    //     unsigned short prevsymbol = 0;
+    //     unsigned index = 0;
+    //     for(; index < nbSeq; index++) {
+    //         unsigned tmp = llCodeTable[index];
+    //         if(prevsymbol == llbesto0 && llCodeTable[index] != llbesto1[llCodeTable[index]]) {
+    //             llCodeTable[index] = llbesto1[llCodeTable[index]];
+    //             conversion_num++;
+    //         }
+    //         prevsymbol = tmp;
+    //     }
+    //     o1printf("llCodeTable conversion done, total conversion num: %u \n", conversion_num);
+    // }
 
     RETURN_ERROR_IF(
         ERR_isError(BIT_initCStream(&blockStream, dst, dstCapacity)),

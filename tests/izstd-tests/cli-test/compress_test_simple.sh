@@ -6,14 +6,14 @@ IZSTD_TESTS_DIR="$(dirname "$SCRIPT_DIR")"
 TESTS_DIR="$(dirname "$IZSTD_TESTS_DIR")"
 IZSTD_ROOT="$(dirname "$TESTS_DIR")"
 
-DATASETS_DIR="$TESTS_DIR/izstd-tests/datasets"
+DATASETS_DIR="$TESTS_DIR/izstd-tests/datasets/simple/"
 ZSTD_BIN="$IZSTD_ROOT/programs/zstd"
 
-OUTPUT_CSV="$SCRIPT_DIR/compress_results.csv"
+OUTPUT_CSV="$SCRIPT_DIR/compress_results_simple.csv"
 TMP_OUT="/tmp/zstd_tmp_out"
 
-LEVELS="1 2 3 4 5 6 7 8 9"
-REPEAT=20
+LEVELS="3"
+REPEAT=1
 
 # ============================================
 # Build
@@ -39,7 +39,7 @@ echo "dataset,file,level,orig_size,comp_size,ratio,avg_time_ms,avg_throughput_MB
 # ============================================
 echo "===[2] Running compression tests...==="
 
-for dataset in "$DATASETS_DIR"/calgary "$DATASETS_DIR"/silesia; do
+for dataset in "$DATASETS_DIR"/ ; do
     dataset_name=$(basename "$dataset")
 
     for file in "$dataset"/*; do

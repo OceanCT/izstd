@@ -1,0 +1,268 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.10"
+					},
+					"projectIndex" : 0,
+					"source" : "."
+				},
+				{
+					"build" : "build/cmake",
+					"childIndexes" : 
+					[
+						2,
+						3
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-build.cmake-Debug-971fe8fc928becaab80a.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.10"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 1,
+					"source" : "build/cmake",
+					"targetIndexes" : 
+					[
+						0
+					]
+				},
+				{
+					"build" : "build/cmake/lib",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-build.cmake.lib-Debug-3f053e8c24a4f487ef12.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.10"
+					},
+					"parentIndex" : 1,
+					"projectIndex" : 2,
+					"source" : "build/cmake/lib",
+					"targetIndexes" : 
+					[
+						1,
+						2,
+						3
+					]
+				},
+				{
+					"build" : "build/cmake/programs",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-build.cmake.programs-Debug-0d15441d24631cb35faa.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.10"
+					},
+					"parentIndex" : 1,
+					"projectIndex" : 3,
+					"source" : "build/cmake/programs",
+					"targetIndexes" : 
+					[
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10,
+						11,
+						12,
+						13
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"childIndexes" : 
+					[
+						1
+					],
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "zstd-superbuild"
+				},
+				{
+					"childIndexes" : 
+					[
+						2,
+						3
+					],
+					"directoryIndexes" : 
+					[
+						1
+					],
+					"name" : "zstd",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						0
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						2
+					],
+					"name" : "libzstd",
+					"parentIndex" : 1,
+					"targetIndexes" : 
+					[
+						1,
+						2,
+						3
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						3
+					],
+					"name" : "programs",
+					"parentIndex" : 1,
+					"targetIndexes" : 
+					[
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10,
+						11,
+						12,
+						13
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 1,
+					"id" : "clean-all::@6cee6a998adb0443b89b",
+					"jsonFile" : "target-clean-all-Debug-88fbd1166ac0ef7d7ad4.json",
+					"name" : "clean-all",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "libzstd_shared::@851263e798cd32821baf",
+					"jsonFile" : "target-libzstd_shared-Debug-41fd7d5043888821f94f.json",
+					"name" : "libzstd_shared",
+					"projectIndex" : 2
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "libzstd_static::@851263e798cd32821baf",
+					"jsonFile" : "target-libzstd_static-Debug-b86edb244f8aeafb81c1.json",
+					"name" : "libzstd_static",
+					"projectIndex" : 2
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "uninstall::@851263e798cd32821baf",
+					"jsonFile" : "target-uninstall-Debug-a4feaa9855dfe66ac1da.json",
+					"name" : "uninstall",
+					"projectIndex" : 2
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "unzstd::@fb6c8ffd8bc0eb3d3401",
+					"jsonFile" : "target-unzstd-Debug-a84a003849802ce60a96.json",
+					"name" : "unzstd",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "unzstd.1::@fb6c8ffd8bc0eb3d3401",
+					"jsonFile" : "target-unzstd.1-Debug-df90e95cfc67f47fb931.json",
+					"name" : "unzstd.1",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "zstd::@fb6c8ffd8bc0eb3d3401",
+					"jsonFile" : "target-zstd-Debug-94fa7dd6604be5c17443.json",
+					"name" : "zstd",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "zstd-frugal::@fb6c8ffd8bc0eb3d3401",
+					"jsonFile" : "target-zstd-frugal-Debug-96ff92c0449726617e2a.json",
+					"name" : "zstd-frugal",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "zstd.1::@fb6c8ffd8bc0eb3d3401",
+					"jsonFile" : "target-zstd.1-Debug-83c004e7dd878dc80a49.json",
+					"name" : "zstd.1",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "zstdcat::@fb6c8ffd8bc0eb3d3401",
+					"jsonFile" : "target-zstdcat-Debug-bab391c8000be5180750.json",
+					"name" : "zstdcat",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "zstdcat.1::@fb6c8ffd8bc0eb3d3401",
+					"jsonFile" : "target-zstdcat.1-Debug-efbe5a793d69afec7f4e.json",
+					"name" : "zstdcat.1",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "zstdgrep.1::@fb6c8ffd8bc0eb3d3401",
+					"jsonFile" : "target-zstdgrep.1-Debug-fb76956d2ee471b8c26a.json",
+					"name" : "zstdgrep.1",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "zstdless.1::@fb6c8ffd8bc0eb3d3401",
+					"jsonFile" : "target-zstdless.1-Debug-e942d19d6fb54fe89146.json",
+					"name" : "zstdless.1",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "zstdmt::@fb6c8ffd8bc0eb3d3401",
+					"jsonFile" : "target-zstdmt-Debug-0ac2059a0d8c4e9a9a97.json",
+					"name" : "zstdmt",
+					"projectIndex" : 3
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/yzc/izstd/build",
+		"source" : "/home/yzc/izstd"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 3
+	}
+}
